@@ -2,6 +2,7 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from '../database/database.js';
 import { toDefaultValue } from 'sequelize/lib/utils';
 import { Auxiliar } from './Auxiliar.js';
+import { Publicacion } from './Publicacion.js';
 
 export const Problematica = sequelize.define('problematicas', {
     id_problematica: {
@@ -56,18 +57,9 @@ export const Problematica = sequelize.define('problematicas', {
     zona: {
         type: DataTypes.STRING,
         allowNull: true
-    },
-    fecha_registro: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        DefaultValue: DataTypes.NOW
-    },
-    activo:{
-        type: DataTypes.BOOLEAN,
-        DefaultValue: true
     }
 }, {
-    timestamps: false,
+    timestamps: true,
     hooks: {
         beforeValidate: (problematica, options) => {
             problematica.planteamiento = problematica.planteamiento.toUpperCase();   
@@ -82,6 +74,16 @@ Problematica.hasMany(Auxiliar,{
 })
 
 Auxiliar.belongsTo(Problematica,{
+    foreingKey: 'problematica_id',
+    targetId: 'id_problematica'
+})
+
+Problematica.hasMany(Publicacion,{
+    foreingKey: 'problematica_id',
+    sourceKey: 'id_problematica'
+})
+
+Publicacion.belongsTo(Problematica,{
     foreingKey: 'problematica_id',
     targetId: 'id_problematica'
 })
